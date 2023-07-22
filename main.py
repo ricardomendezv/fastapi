@@ -1,5 +1,6 @@
 from fastapi import FastAPI, HTTPException
 from typing import List, Dict
+import requests
 
 app = FastAPI()
 
@@ -17,6 +18,21 @@ async def create_task(task: Dict[str, str]):
 async def get_tasks():
     return tasks
 
+@app.get("/relator/")
+async def get_relator():
+    url = "https://realtor.p.rapidapi.com/locations/v2/auto-complete"
+
+    querystring = {"input":"new york","limit":"10"}
+
+    headers = {
+        "X-RapidAPI-Key": "0fc7252295mshab931aa981c318ap1236c1jsn1f04d7a7d8c8",
+        "X-RapidAPI-Host": "realtor.p.rapidapi.com"
+    }
+
+    response = requests.get(url, headers=headers, params=querystring)
+
+    # print(response.json())
+    return response.json()
 
 @app.get("/tasks/{task_id}", response_model=Dict[str, str])
 async def get_task(task_id: int):
